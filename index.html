@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Simple Blur</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="simpleblur.js"></script>
 </head>
 
@@ -12,7 +13,13 @@
 		<img id="target" src="img2.jpg" style="width: 100%;height: auto;"/>
 	</div>
 	<script>
-		simpleblur('#target');
+		var options = {
+			'scaledown_percentage': 0.2,
+			'blurring_average' : 3,
+			'blurring_iterations': 8
+		}
+		simpleblur('#target',options);
+		//$('#target').simpleblur();
 	</script>
 </body>
 </html>
