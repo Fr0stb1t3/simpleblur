@@ -2,8 +2,8 @@
     "use strict";
     var GLOB = {};
     /**
-	Overview of functionality. The script works by using a temporary canvas where the image data is altered and then the resulting data uri replaces the src of the target image.
-	Make sure that the image is loaded before trying to blur blurring
+	Overview of functionality. 
+    TO DO. Bind settings and extend jquery
 	@params:
 		#target query
 		Scaledown percentage ->   Reduces the size of the temporary canvas, thus the size of the data uri output and image and increases the blurring. DEFAULT 0.05
@@ -19,26 +19,26 @@
         } else {
             GLOB.storageAvailable = false;
         }
-        var start = +new Date();
+        // var start = + new Date();
         var target = target || '#simpleBlurTarget';
         var elements = document.querySelectorAll(target);
         for (var j = 0; j < elements.length; j++) {
             loadFilter(elements[j]);
         }
-        var end = +new Date(); // log end timestamp
-        var diff = end - start;
-        console.log('------');
-        console.log('Set for' + target);
-        console.log(diff);
+        //var end = +new Date(); // log end timestamp
+        //var diff = end - start;
+        //console.log('------');
+        //console.log('Set for' + target);
+        //console.log(diff);
     }
 
-    function main(element) {
-        var img = element;
+    function main(img) {
         var dataUri;
+        var key = 'blurImage'+img.src+img.offsetWidth;
         if (GLOB.storageAvailable) {
-            var stored = localStorage.getItem("blurImage");
+            var stored = localStorage.getItem(key);
             if (typeof stored !== 'undefined' && stored !== null) {
-                //dataUri = stored
+                dataUri = stored
             }
         }
         if (typeof dataUri === 'undefined') {
@@ -57,7 +57,7 @@
             ctx.putImageData(imgData, 0, 0);
             dataUri = c.toDataURL("image/png");
             if (GLOB.storageAvailable) {
-                localStorage.setItem("blurImage", dataUri);
+                localStorage.setItem(key, dataUri);
             }
         }
         img.src = dataUri;
@@ -99,7 +99,7 @@
                     runCount++;
                     if (runCount > 3) clearInterval(timerId);
                 }
-            }, 50 * runCount);
+            }, 25 * runCount);
         }
     }
 
