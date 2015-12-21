@@ -9,8 +9,11 @@
 </head>
 
 <body> 
-	<div id="blur">
+
+	<div id="blur"  >
 		<img id="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+	</div>
+	<div id="blur2" style="width:100%;height:100%;min-height: 700px;;background-image:url('img2.jpg'); background-repeat:no-repeat;background-size: 100% 100%;">
 	</div>
 	<script>
 		var options = {
@@ -19,6 +22,7 @@
 			'blurring_iterations': 8
 		}
 		simpleblur('#target',options);
+		simpleblur('#blur2',options);
 		//$('#target').simpleblur();
 	</script>
 </body>
