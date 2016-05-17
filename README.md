@@ -23,6 +23,11 @@ blurring_iterations - Adds additional runs to the blurring algorithm. Default 4
 
 scaledown_percentage - The blur works by setting the pixel to the average of a surrounding grid of pixels. This increases the size of the grid. Default is a grid of 3x3
 
+cache - Stores the blurred images in local storage if available  Default: true
+
+widthTopCap - Maximum width range. The image is scaled based on the window size, so on smaller devices the image is blurred more. Default 1200
+widthBottomCap - Minimum width range. Default 600
+
 License
 ----
 MIT
