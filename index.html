@@ -8,20 +8,27 @@
 <script src="simpleblur.js"></script>
 </head>
 
-<body> 
+<body>
 
 	<div id="blur"  >
-		<img id="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img3.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img3.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img3.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img2.jpg" style="width: 100%;height: auto;"/>
+		<img class="target" src="img2.jpg" style="width: 100%;height: auto;"/>
 	</div>
-	<div id="blur2" style="width:100%;height:100%;min-height: 700px;;background-image:url('img2.jpg'); background-repeat:no-repeat;background-size: 100% 100%;">
+	<div id="blur2" style="width:100%;height:100%;min-height: 700px;;background-image:url('img2.jpg'); background-repeat:no-repeat;background-size: 100% auto;">
 	</div>
 	<script>
 		var options = {
-			'scaledown_percentage': 0.2,
-			'blurring_average' : 3,
+			'scaledown_percentage': 0.4,
+			'blurring_average' : 5,
 			'blurring_iterations': 8
 		}
-		simpleblur('#target',options);
+		simpleblur('.target',options);
 		simpleblur('#blur2',options);
 		//$('#target').simpleblur();
 	</script>

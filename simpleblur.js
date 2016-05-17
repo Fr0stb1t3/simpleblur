@@ -1,17 +1,22 @@
 (function(window) {
     "use strict";
     var GLOB = {};
-    /**
+/**
 	@params:
 		#target query
 		Scaledown percentage ->   Reduces the size of the temporary canvas, thus the size of the data uri output and image and increases the blurring. DEFAULT 0.05
 		blurring_iterations  ->   Adds additional runs to the blurring algorithm. Default 1
 		blurring_average scope -> The blur works by setting the pixel to the average of a surrounding grid of pixels. This increases the size of the grid. Default is a grid of 3x3
+    cache -> Stores the blurred images in local storage if available  Default: true
 
-        Output data uri that replaces the source of the image
+    widthTopCap -> Maximum width range. The image is scaled based on the window size, so on smaller devices the image is blurred more. Default 1200
+    widthBottomCap -> Minimum width range. Default 600
+
+    Output data uri that replaces the source of the image
 	*/
     window.simpleblur = function(target, options) {
-        if (typeof(Storage) !== "undefined") {
+        GLOB.w = window.innerWidth;
+        if (typeof(Storage) !== "undefined" && (typeof options.cache ==='undefined' &&  options.cache !== false )) {
             GLOB.storageAvailable = true;
         } else {
             GLOB.storageAvailable = false;
@@ -42,27 +47,47 @@
     }
 
     function main(img,options,bgElement) {
-        console.log('Main');
         var size = options.blurring_average || 4;
         var iterations = options.blurring_iterations || 3;
         var scaledown = options.scaledown_percentage || 0.1;
+        var widthTopCap = options.widthTopCap || 1200;
+        var widthBottomCap = options.widthBottomCap || 600;
         var dataUri;
         var key = 'blurImage'+img.src+img.offsetWidth+size+iterations+scaledown;
+        var cacheKey = GLOB.w;
+        var oldItems;
+        /*
+        for(var i = 0; i < localStorage.length;i++){//Debug cache clear
+          localStorage.removeItem('picCache');
+        }*/
         if (GLOB.storageAvailable) {
-            var stored = localStorage.getItem(key);
+            oldItems = JSON.parse(localStorage.getItem('picCache')) || {cacheKey:{}};
+            if (typeof oldItems[GLOB.w] !== 'undefined')
+            var stored = oldItems[GLOB.w][key];
             if (typeof stored !== 'undefined' && stored !== null) {
                 dataUri = stored
             }
+
         }
         if (typeof dataUri === 'undefined') {
             var c = document.createElement('canvas');
-            
+
             if (typeof bgElement !== 'undefined') {
                 var w = bgElement.offsetWidth;
                 var h = bgElement.offsetHeight;
             }else{
                 var w = img.offsetWidth;
                 var h = img.offsetHeight;
+            }
+            if (w > widthTopCap){
+                var capPerc = widthTopCap / w;
+                w *= capPerc;
+                h *= capPerc;
+            }
+            if (w < widthBottomCap){
+                var capPerc = widthBottomCap / w;
+                w *= capPerc;
+                h *= capPerc;
             }
             c.setAttribute("width", w * scaledown + "px");
             c.setAttribute("height", h * scaledown + "px");
@@ -73,8 +98,22 @@
             blurAlg(imgData.data, c.width, iterations, size);
             ctx.putImageData(imgData, 0, 0);
             dataUri = c.toDataURL("image/png");
+
             if (GLOB.storageAvailable) {
-                localStorage.setItem(key, dataUri);
+                if(typeof oldItems[cacheKey]=='undefined'){
+                  oldItems[cacheKey] = {}
+                  if(typeof oldItems[cacheKey][key]=='undefined')
+                      oldItems[cacheKey][key] = {};
+                }
+                oldItems[cacheKey][key] = dataUri;
+                try {
+                  localStorage.setItem('picCache', JSON.stringify(oldItems));
+                } catch (e) {
+                  if (e ) {
+                    console.log('Quota exceeded!'); //data wasn't successfully saved due to quota exceed so throw an error
+                    //console.log(oldItems);
+                  }
+                }
             }
         }
         if (typeof bgElement !== 'undefined') {
@@ -132,7 +171,6 @@
             src = src.replace('"','');
             var img = new Image();
             img.onload = function () {
-                console.log('hello');
                 main(img,options,element);
             }
             img.src = src;
@@ -148,8 +186,8 @@
         }
         return true;
     }
-    
-    function css(a) { 
+
+    function css(a) {
         var propArr = ['width',
             'height',
             'opacity',
