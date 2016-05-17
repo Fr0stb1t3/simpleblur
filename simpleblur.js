@@ -56,10 +56,10 @@
         var key = 'blurImage'+img.src+img.offsetWidth+size+iterations+scaledown;
         var cacheKey = GLOB.w;
         var oldItems;
-        /*
+
         for(var i = 0; i < localStorage.length;i++){//Debug cache clear
           localStorage.removeItem('picCache');
-        }*/
+        }  /**/
         if (GLOB.storageAvailable) {
             oldItems = JSON.parse(localStorage.getItem('picCache')) || {cacheKey:{}};
             if (typeof oldItems[GLOB.w] !== 'undefined')
@@ -83,11 +83,13 @@
                 var capPerc = widthTopCap / w;
                 w *= capPerc;
                 h *= capPerc;
+                cacheKey = w ;
             }
             if (w < widthBottomCap){
                 var capPerc = widthBottomCap / w;
                 w *= capPerc;
                 h *= capPerc;
+                cacheKey = w ;
             }
             c.setAttribute("width", w * scaledown + "px");
             c.setAttribute("height", h * scaledown + "px");
@@ -111,7 +113,7 @@
                 } catch (e) {
                   if (e ) {
                     console.log('Quota exceeded!'); //data wasn't successfully saved due to quota exceed so throw an error
-                    //console.log(oldItems);
+                    console.log(localStorage);
                   }
                 }
             }
